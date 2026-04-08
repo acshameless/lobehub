@@ -138,6 +138,19 @@ describe('AgentDocumentModel', () => {
       expect(updatedDoc?.description).toBe('new desc');
     });
 
+    it('should upsert by creating a new document when filename does not exist', async () => {
+      const result = await agentDocumentModel.upsert(agentId, 'new-upsert.md', 'fresh', {
+        loadPosition: DocumentLoadPosition.BEFORE_SYSTEM,
+        loadRules: { priority: 5 },
+        templateId: 'claw',
+      });
+
+      expect(result.filename).toBe('new-upsert.md');
+      expect(result.content).toBe('fresh');
+      expect(result.templateId).toBe('claw');
+      expect(result.policy?.context?.position).toBe(DocumentLoadPosition.BEFORE_SYSTEM);
+    });
+
     it('should upsert by filename and merge metadata on updates', async () => {
       const first = await agentDocumentModel.upsert(agentId, 'policy-upsert.md', 'v1', {
         loadPosition: DocumentLoadPosition.BEFORE_FIRST_USER,
@@ -359,6 +372,11 @@ describe('AgentDocumentModel', () => {
         .where(eq(documents.id, created.documentId));
 
       expect(rawDoc).toBeDefined();
+    });
+
+    it('should return empty string from getAgentContext when no loadable docs exist', async () => {
+      const context = await agentDocumentModel.getAgentContext(agentId);
+      expect(context).toBe('');
     });
 
     it('should soft delete by agent and by template', async () => {
