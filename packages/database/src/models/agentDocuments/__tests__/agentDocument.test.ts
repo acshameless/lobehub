@@ -118,14 +118,13 @@ describe('AgentDocumentModel', () => {
         { description: 'old desc', topic: 'old' },
       );
 
-      await agentDocumentModel.update(
-        created.id,
-        'new\ncontent',
-        DocumentLoadPosition.AFTER_KNOWLEDGE,
-        { maxTokens: 500, priority: 1 },
-        { description: 'new desc', topic: 'new' },
-        { context: { policyLoadFormat: DocumentLoadFormat.FILE } },
-      );
+      await agentDocumentModel.update(created.id, {
+        content: 'new\ncontent',
+        loadPosition: DocumentLoadPosition.AFTER_KNOWLEDGE,
+        loadRules: { maxTokens: 500, priority: 1 },
+        metadata: { description: 'new desc', topic: 'new' },
+        policy: { context: { policyLoadFormat: DocumentLoadFormat.FILE } },
+      });
 
       const updated = await agentDocumentModel.findById(created.id);
       expect(updated?.content).toBe('new\ncontent');

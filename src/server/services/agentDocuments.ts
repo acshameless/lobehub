@@ -363,7 +363,7 @@ export class AgentDocumentsService {
     const doc = await this.getDocumentByIdInAgent(documentId, expectedAgentId);
     if (!doc) return undefined;
 
-    await this.agentDocumentModel.update(documentId, content);
+    await this.agentDocumentModel.update(documentId, { content });
     return this.agentDocumentModel.findById(documentId);
   }
 
