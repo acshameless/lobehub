@@ -47,11 +47,13 @@ export class AgentDocumentsService {
     agentId: string,
     title: string,
     content: string,
-    loadPosition?: DocumentLoadPosition,
-    loadRules?: DocumentLoadRules,
-    templateId?: string,
-    metadata?: Record<string, any>,
-    policy?: AgentDocumentPolicy,
+    params?: {
+      loadPosition?: DocumentLoadPosition;
+      loadRules?: DocumentLoadRules;
+      metadata?: Record<string, any>;
+      policy?: AgentDocumentPolicy;
+      templateId?: string;
+    },
   ) {
     const baseFilename = buildDocumentFilename(title);
     const extensionMatch = baseFilename.match(/(\.[^./\\]+)$/);
@@ -72,16 +74,7 @@ export class AgentDocumentsService {
       suffix += 1;
     }
 
-    return this.agentDocumentModel.create(
-      agentId,
-      filename,
-      content,
-      loadPosition,
-      loadRules,
-      templateId,
-      metadata,
-      policy,
-    );
+    return this.agentDocumentModel.create(agentId, filename, content, params);
   }
 
   /**
@@ -94,23 +87,16 @@ export class AgentDocumentsService {
     const templateSet = getDocumentTemplate(templateId);
 
     for (const template of templateSet.templates) {
-      await this.agentDocumentModel.upsert(
-        agentId,
-        template.filename,
-        template.content,
-        template.loadPosition,
-        template.loadRules,
-        templateId,
-        template.metadata,
-        template.policyLoadFormat
-          ? {
-              context: {
-                policyLoadFormat: template.policyLoadFormat,
-              },
-            }
+      await this.agentDocumentModel.upsert(agentId, template.filename, template.content, {
+        loadPosition: template.loadPosition,
+        loadRules: template.loadRules,
+        metadata: template.metadata,
+        policy: template.policyLoadFormat
+          ? { context: { policyLoadFormat: template.policyLoadFormat } }
           : undefined,
-        template.policyLoad,
-      );
+        policyLoad: template.policyLoad,
+        templateId,
+      });
     }
   }
 
@@ -119,23 +105,16 @@ export class AgentDocumentsService {
    */
   async initializeFromCustomTemplate(agentId: string, templateSet: DocumentTemplateSet) {
     for (const template of templateSet.templates) {
-      await this.agentDocumentModel.upsert(
-        agentId,
-        template.filename,
-        template.content,
-        template.loadPosition,
-        template.loadRules,
-        templateSet.id,
-        template.metadata,
-        template.policyLoadFormat
-          ? {
-              context: {
-                policyLoadFormat: template.policyLoadFormat,
-              },
-            }
+      await this.agentDocumentModel.upsert(agentId, template.filename, template.content, {
+        loadPosition: template.loadPosition,
+        loadRules: template.loadRules,
+        metadata: template.metadata,
+        policy: template.policyLoadFormat
+          ? { context: { policyLoadFormat: template.policyLoadFormat } }
           : undefined,
-        template.policyLoad,
-      );
+        policyLoad: template.policyLoad,
+        templateId: templateSet.id,
+      });
     }
   }
 
@@ -217,19 +196,16 @@ export class AgentDocumentsService {
     createdAt,
     updatedAt,
   }: UpsertDocumentParams) {
-    return this.agentDocumentModel.upsert(
-      agentId,
-      filename,
-      content,
+    return this.agentDocumentModel.upsert(agentId, filename, content, {
+      createdAt,
       loadPosition,
       loadRules,
-      templateId,
       metadata,
       policy,
       policyLoad,
-      createdAt,
+      templateId,
       updatedAt,
-    );
+    });
   }
 
   async createDocument(agentId: string, title: string, content: string) {
