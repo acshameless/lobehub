@@ -161,6 +161,7 @@ export class AgentDocumentModel {
     loadRules?: Partial<DocumentLoadRules>,
     metadata?: Record<string, any>,
     policy?: AgentDocumentPolicy,
+    policyLoad?: PolicyLoad,
   ): Promise<void> {
     const existing = await this.findById(documentId);
 
@@ -192,6 +193,7 @@ export class AgentDocumentModel {
       policyLoadFormat: mergedPolicy.context?.policyLoadFormat || DocumentLoadFormat.RAW,
       policyLoadPosition: mergedPolicy.context?.position || DocumentLoadPosition.BEFORE_FIRST_USER,
       policyLoadRule: mergedPolicy.context?.rule || DocumentLoadRule.ALWAYS,
+      ...(policyLoad !== undefined && { policyLoad }),
     };
 
     await this.db.transaction(async (trx) => {
@@ -335,7 +337,15 @@ export class AgentDocumentModel {
         ? { ...existing.metadata, ...metadata }
         : (existing.metadata ?? undefined);
 
-      await this.update(existing.id, content, loadPosition, mergedRules, mergedMetadata, policy);
+      await this.update(
+        existing.id,
+        content,
+        loadPosition,
+        mergedRules,
+        mergedMetadata,
+        policy,
+        policyLoad,
+      );
 
       return (await this.findByFilename(agentId, filename))!;
     }

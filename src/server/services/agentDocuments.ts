@@ -5,6 +5,7 @@ import {
   type DocumentLoadRules,
   type DocumentTemplateSet,
   getDocumentTemplate,
+  type PolicyLoad,
 } from '@lobechat/agent-templates';
 import type { LobeChatDatabase } from '@lobechat/database';
 
@@ -26,6 +27,7 @@ interface UpsertDocumentParams {
   loadRules?: DocumentLoadRules;
   metadata?: Record<string, any>;
   policy?: AgentDocumentPolicy;
+  policyLoad?: PolicyLoad;
   templateId?: string;
   updatedAt?: Date;
 }
@@ -211,6 +213,7 @@ export class AgentDocumentsService {
     templateId,
     metadata,
     policy,
+    policyLoad,
     createdAt,
     updatedAt,
   }: UpsertDocumentParams) {
@@ -223,7 +226,7 @@ export class AgentDocumentsService {
       templateId,
       metadata,
       policy,
-      undefined,
+      policyLoad,
       createdAt,
       updatedAt,
     );
