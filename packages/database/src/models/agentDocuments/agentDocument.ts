@@ -280,6 +280,7 @@ export class AgentDocumentModel {
       loadRules: parseLoadRules(existing),
       metadata: existing.metadata || undefined,
       policy: existing.policy || undefined,
+      policyLoad: existing.policyLoad as PolicyLoad | undefined,
       templateId: existing.templateId || undefined,
     });
   }

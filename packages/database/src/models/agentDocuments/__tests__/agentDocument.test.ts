@@ -206,6 +206,16 @@ describe('AgentDocumentModel', () => {
       expect(copied?.policy?.context?.maxTokens).toBe(200);
       expect(copied?.metadata).toMatchObject({ description: 'source desc', domain: 'A' });
     });
+
+    it('should preserve policyLoad when copying a document', async () => {
+      const created = await agentDocumentModel.create(agentId, 'always-doc.md', 'content', {
+        policyLoad: PolicyLoad.ALWAYS,
+      });
+
+      const copied = await agentDocumentModel.copy(created.id, 'Always Copy');
+
+      expect(copied?.policyLoad).toBe(PolicyLoad.ALWAYS);
+    });
   });
 
   describe('findByAgent and findByTemplate', () => {
