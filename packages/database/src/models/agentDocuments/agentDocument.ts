@@ -94,6 +94,7 @@ export class AgentDocumentModel {
     templateId?: string,
     metadata?: Record<string, any>,
     policy?: AgentDocumentPolicy,
+    policyLoad?: PolicyLoad,
     createdAt?: Date,
     updatedAt?: Date,
   ): Promise<AgentDocument> {
@@ -131,7 +132,7 @@ export class AgentDocumentModel {
         accessShared: 0,
         agentId,
         createdAt,
-        policyLoad: PolicyLoad.PROGRESSIVE,
+        policyLoad: policyLoad ?? PolicyLoad.PROGRESSIVE,
         deleteReason: null,
         deletedAt: null,
         deletedByAgentId: null,
@@ -321,6 +322,7 @@ export class AgentDocumentModel {
     templateId?: string,
     metadata?: Record<string, any>,
     policy?: AgentDocumentPolicy,
+    policyLoad?: PolicyLoad,
     createdAt?: Date,
     updatedAt?: Date,
   ): Promise<AgentDocument> {
@@ -347,6 +349,7 @@ export class AgentDocumentModel {
       templateId,
       metadata,
       policy,
+      policyLoad,
       createdAt,
       updatedAt,
     );

@@ -107,6 +107,7 @@ export class AgentDocumentsService {
               },
             }
           : undefined,
+        template.policyLoad,
       );
     }
   }
@@ -131,6 +132,7 @@ export class AgentDocumentsService {
               },
             }
           : undefined,
+        template.policyLoad,
       );
     }
   }
@@ -221,6 +223,7 @@ export class AgentDocumentsService {
       templateId,
       metadata,
       policy,
+      undefined,
       createdAt,
       updatedAt,
     );
